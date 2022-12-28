@@ -12,14 +12,14 @@ namespace BlazorEcommerce.Client.Services.ProductService
 
         }
         public List<Product> Products { get; set; } = new List<Product>();
-        public string message { get; set; } = "Loading Products...";
+        public string Message { get; set; } = "Loading Products...";
 
         public event Action ProductsChanged;
 
         public async Task GetProducts(string? categoryUrl = null)
         {
             var results = categoryUrl == null ?
-                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product") :
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product/featured") :
                 await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/category/{categoryUrl}");
             if (results != null && results.Data != null)
                 Products = results.Data;
@@ -48,7 +48,7 @@ namespace BlazorEcommerce.Client.Services.ProductService
                 GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/search/{searchText}");
             if (result != null && result.Data != null)
                 Products = result.Data;
-            if (Products.Count == 0) message = "No Products Found";
+            if (Products.Count == 0) Message = "No Products Found";
             ProductsChanged?.Invoke();
         }
     }

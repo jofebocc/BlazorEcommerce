@@ -9,6 +9,18 @@
             _context = context;
         }
 
+        public async Task<ServiceResponse<List<Product>>> GetFeaturedProducts()
+        {
+            var response = new ServiceResponse<List<Product>>
+            {
+                Data = await _context.Products
+                .Where(p => p.Featured)
+                .Include(p => p.Variants)
+                .ToListAsync()
+            };
+            return response;
+        }
+
         public async Task<ServiceResponse<List<Product>>> GetProductAsync()
         {
             var responde = new ServiceResponse<List<Product>>
@@ -53,7 +65,7 @@
 
         public async Task<ServiceResponse<List<string>>> GetProductSearchSuggestions(string searchText)
         {
-            var products = await FindProductsBySerachText(searchText);
+            var products = await FindProductsBySearchText(searchText);
 
             List<string> result = new List<string>();
 
@@ -89,13 +101,13 @@
         {
             var response = new ServiceResponse<List<Product>>
             {
-                Data = await FindProductsBySerachText(searchText)
+                Data = await FindProductsBySearchText(searchText)
             };
 
             return response;
         }
 
-        private async Task<List<Product>> FindProductsBySerachText(string searchText)
+        private async Task<List<Product>> FindProductsBySearchText(string searchText)
         {
             return await _context.Products
                             .Where(p => p.Title.ToLower().Contains(searchText.ToLower())
